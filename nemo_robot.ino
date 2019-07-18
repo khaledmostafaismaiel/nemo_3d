@@ -256,6 +256,72 @@ int underworld_tempo[] = {
     10, 10, 10,
     3, 3, 3};
 
+int melody_1[] = {
+    NOTE_E5, NOTE_E5, NOTE_E5,
+    NOTE_E5, NOTE_E5, NOTE_E5,
+    NOTE_E5, NOTE_G5, NOTE_C5, NOTE_D5,
+    NOTE_E5,
+    NOTE_F5, NOTE_F5, NOTE_F5, NOTE_F5,
+    NOTE_F5, NOTE_E5, NOTE_E5, NOTE_E5, NOTE_E5,
+    NOTE_E5, NOTE_D5, NOTE_D5, NOTE_E5,
+    NOTE_D5, NOTE_G5};
+
+int tempo_1[] = {
+    8, 8, 4,
+    8, 8, 4,
+    8, 8, 8, 8,
+    2,
+    8, 8, 8, 8,
+    8, 8, 8, 16, 16,
+    8, 8, 8, 8,
+    4, 4};
+
+// We wish you a merry Christmas
+
+int wish_melody[] = {
+    NOTE_B3,
+    NOTE_F4, NOTE_F4, NOTE_G4, NOTE_F4, NOTE_E4,
+    NOTE_D4, NOTE_D4, NOTE_D4,
+    NOTE_G4, NOTE_G4, NOTE_A4, NOTE_G4, NOTE_F4,
+    NOTE_E4, NOTE_E4, NOTE_E4,
+    NOTE_A4, NOTE_A4, NOTE_B4, NOTE_A4, NOTE_G4,
+    NOTE_F4, NOTE_D4, NOTE_B3, NOTE_B3,
+    NOTE_D4, NOTE_G4, NOTE_E4,
+    NOTE_F4};
+
+int wish_tempo[] = {
+    4,
+    4, 8, 8, 8, 8,
+    4, 4, 4,
+    4, 8, 8, 8, 8,
+    4, 4, 4,
+    4, 8, 8, 8, 8,
+    4, 4, 8, 8,
+    4, 4, 4,
+    2};
+
+// Santa Claus is coming to town
+
+int santa_melody[] = {
+    NOTE_G4,
+    NOTE_E4, NOTE_F4, NOTE_G4, NOTE_G4, NOTE_G4,
+    NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, NOTE_C5,
+    NOTE_E4, NOTE_F4, NOTE_G4, NOTE_G4, NOTE_G4,
+    NOTE_A4, NOTE_G4, NOTE_F4, NOTE_F4,
+    NOTE_E4, NOTE_G4, NOTE_C4, NOTE_E4,
+    NOTE_D4, NOTE_F4, NOTE_B3,
+    NOTE_C4};
+
+int santa_tempo[] = {
+    8,
+    8, 8, 4, 4, 4,
+    8, 8, 4, 4, 4,
+    8, 8, 4, 4, 4,
+    8, 8, 4, 2,
+    4, 4, 4, 4,
+    4, 2, 4,
+    1};
+
 int song = 0;
 int status = 0;
 int action = 0;
@@ -321,7 +387,7 @@ void loop()
   {
     digitalWrite(LED_PIN, LOW);
 
-    action = rand() % 5;
+    action = rand() % 8;
 
     switch (action)
     {
@@ -334,11 +400,29 @@ void loop()
       break;
 
     case 2:
-      ballet_stand();
+      sing(3);
+
       break;
 
     case 3:
+      sing(4);
+
+      break;
+
+    case 4:
+      sing(5);
+      break;
+
+    case 5:
       wave();
+      break;
+
+    case 6:
+      ballet_stand();
+      break;
+
+    case 7:
+      flash();
       break;
 
     default:
@@ -350,6 +434,7 @@ void loop()
   else
   {
     digitalWrite(LED_PIN, HIGH);
+
     move_forward();
   }
 
@@ -566,8 +651,79 @@ void move_forward(void)
 void sing(int s)
 {
   // iterate over the notes of the melody:
+  // iterate over the notes of the melody:
   song = s;
-  if (song == 2)
+  if (song == 5)
+  {
+    Serial.println(" 'We wish you a Merry Christmas'");
+    int size = sizeof(wish_melody) / sizeof(int);
+    for (int thisNote = 0; thisNote < size; thisNote++)
+    {
+
+      // to calculate the note duration, take one second
+      // divided by the note type.
+      //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
+      int noteDuration = 1000 / wish_tempo[thisNote];
+
+      buzz(BUZZER_PIN, wish_melody[thisNote], noteDuration);
+
+      // to distinguish the notes, set a minimum time between them.
+      // the note's duration + 30% seems to work well:
+      int pauseBetweenNotes = noteDuration * 1.30;
+      delay(pauseBetweenNotes);
+
+      // stop the tone playing:
+      buzz(BUZZER_PIN, 0, noteDuration);
+    }
+  }
+  else if (song == 4)
+  {
+    Serial.println(" 'Santa Claus is coming to town'");
+    int size = sizeof(santa_melody) / sizeof(int);
+    for (int thisNote = 0; thisNote < size; thisNote++)
+    {
+
+      // to calculate the note duration, take one second
+      // divided by the note type.
+      //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
+      int noteDuration = 900 / santa_tempo[thisNote];
+
+      buzz(BUZZER_PIN, santa_melody[thisNote], noteDuration);
+
+      // to distinguish the notes, set a minimum time between them.
+      // the note's duration + 30% seems to work well:
+      int pauseBetweenNotes = noteDuration * 1.30;
+      delay(pauseBetweenNotes);
+
+      // stop the tone playing:
+      buzz(BUZZER_PIN, 0, noteDuration);
+    }
+  }
+  else if (song == 3)
+  {
+
+    Serial.println(" 'Jingle Bells'");
+    int size = sizeof(melody) / sizeof(int);
+    for (int thisNote = 0; thisNote < size; thisNote++)
+    {
+
+      // to calculate the note duration, take one second
+      // divided by the note type.
+      //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
+      int noteDuration = 1000 / tempo_1[thisNote];
+
+      buzz(BUZZER_PIN, melody_1[thisNote], noteDuration);
+
+      // to distinguish the notes, set a minimum time between them.
+      // the note's duration + 30% seems to work well:
+      int pauseBetweenNotes = noteDuration * 1.30;
+      delay(pauseBetweenNotes);
+
+      // stop the tone playing:
+      buzz(BUZZER_PIN, 0, noteDuration);
+    }
+  }
+  else if (song == 2)
   {
     Serial.println(" 'Underworld Theme'");
     int size = sizeof(underworld_melody) / sizeof(int);
@@ -590,7 +746,7 @@ void sing(int s)
       buzz(BUZZER_PIN, 0, noteDuration);
     }
   }
-  else
+  else if (song == 1)
   {
 
     Serial.println(" 'Mario Theme'");
